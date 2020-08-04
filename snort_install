@@ -1,35 +1,5 @@
 #/bin/sh 
-mkdir ./snort_src
-cd snort_src
 
-wget http://www.tcpdump.org/release/libpcap-1.8.1.tar.gz
-tar xzvf libpcap-1.8.1.tar.gz
-cd libpcap-1.8.1
-autoreconf -f -i
-./configure && make && make install
-yum install libpcap-devel -y
-cd ..
-
-wget https://www.snort.org/downloads/snort/daq-2.0.7.tar.gz
-tar xvfz daq-2.0.7.tar.gz
-cd daq-2.0.7
-autoreconf -f -i
-./configure && make && make install
-cd ..
-
-git clone http://luajit.org/git/luajit-2.0.git
-cd luajit-2.0
-make && make install
-cd ..
-
-wget https://www.snort.org/downloads/snort/snort-2.9.16.tar.gz
-tar -xvzf snort-2.9.16.tar.gz
-cd snort-2.9.16
-./configure --enable-sourcefire && make && make install
-ldconfig
-ln -s /usr/local/bin/snort /usr/sbin/snort
-snort -v
-cd ~
 
 groupadd snort
 useradd snort -r -s /sbin/nologin -c SNORT_IDS -g snort
