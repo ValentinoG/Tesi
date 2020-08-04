@@ -1,0 +1,66 @@
+#/bin/sh 
+mkdir ./snort_src
+cd snort_src
+
+wget http://www.tcpdump.org/release/libpcap-1.8.1.tar.gz
+tar xzvf libpcap-1.8.1.tar.gz
+cd libpcap-1.8.1
+autoreconf -f -i
+./configure && make && make install
+yum install libpcap-devel -y
+cd ..
+
+wget https://www.snort.org/downloads/snort/daq-2.0.7.tar.gz
+tar xvfz daq-2.0.7.tar.gz
+cd daq-2.0.7
+autoreconf -f -i
+./configure && make && make install
+cd ..
+
+git clone http://luajit.org/git/luajit-2.0.git
+cd luajit-2.0
+make && make install
+
+wget https://www.snort.org/downloads/snort/snort-2.9.16.tar.gz
+tar -xvzf snort-2.9.16.tar.gz
+cd snort-2.9.16
+./configure --enable-sourcefire && make && make install
+ldconfig
+ln -s /usr/local/bin/snort /usr/sbin/snort
+snort -v
+
+groupadd snort
+useradd snort -r -s /sbin/nologin -c SNORT_IDS -g snort
+mkdir /etc/snort
+mkdir /etc/snort/rules
+mkdir /etc/snort/rules/iplists
+mkdir /etc/snort/preproc_rules
+mkdir /usr/local/lib/snort_dynamicrules
+mkdir /etc/snort/so_rules
+touch /etc/snort/rules/iplists/black_list.rules
+touch /etc/snort/rules/iplists/white_list.rules
+touch /etc/snort/rules/local.rules
+touch /etc/snort/sid-msg.map
+mkdir /var/log/snort
+mkdir /var/log/snort/archived_logs
+chmod -R 5775 /etc/snort
+chmod -R 5775 /var/log/snort
+chmod -R 5775 /var/log/snort/archived_logs
+chmod -R 5775 /etc/snort/so_rules
+chmod -R 5775 /usr/local/lib/snort_dynamicrules
+chown -R snort:snort /etc/snort
+chown -R snort:snort /var/log/snort
+chown -R snort:snort /usr/local/lib/snort_dynamicrules
+cd ~/snort_src/snort-2.9.16/etc/
+cp *.conf* /etc/snort
+cp *.map /etc/snort
+cp *.dtd /etc/snort
+cd ~/snort_src/snort-2.9.16/src/dynamic-preprocessors/build/usr/local/lib/snort_dynamicpreprocessor/
+cp * /usr/local/lib/snort_dynamicpreprocessor/
+
+sed -i "/var RULE\_PATH/c\var RULE\_PATH \/etc\/snort\/rules" /etc/snort/snort.conf
+sed -i "/var SO\_RULE\_PATH/c\var SO\_RULE\_PATH \/etc\/snort\/so_rules" /etc/snort/snort.conf
+sed -i "/var PREPROC\_RULE\_PATH/c\var PREPROC\_RULE\_PATH \/etc\/snort\/preproc\_rules" /etc/snort/snort.conf
+sed -i "/var WHITE\_LIST\_PATH/c\var WHITE\_LIST\_PATH \/etc\/snort\/rules\/iplists" /etc/snort/snort.conf
+sed -i "/var BLACK\_LIST\_PATH/c\var BLACK\_LIST\_PATH \/etc\/snort\/rules\/iplists" /etc/snort/snort.conf
+sed -i "s/include \$RULE\_PATH/#include \$RULE\_PATH/" /etc/snort/snort.conf

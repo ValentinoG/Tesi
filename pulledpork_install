@@ -1,0 +1,30 @@
+#/bin/sh 
+
+git clone https://github.com/shirkdog/pulledpork.git
+cd pulledpork/ 
+cp pulledpork.pl /usr/local/bin 
+chmod +x /usr/local/bin/pulledpork.pl 
+cp etc/*.conf /etc/snort 
+mkdir /etc/snort/rules/iplists 
+touch /etc/snort/rules/iplists/default.blacklist
+
+sed -i "19s/.*/#rule_url=https:\/\/www\.snort\.org\/reg-rules\/\|snortrules-snapshot\.tar\.gz\|<oinkcode>/" /etc/snort/pulledpork.conf
+
+sed -i "19s/.*/#rule_url=https:\/\/www\.snort\.org\/reg-rules\/\|snortrules-snapshot\.tar\.gz\|<oinkcode>/" /etc/snort/pulledpork.conf
+sed -i "74s/.*/rule_path=\/etc\/snort\/rules\/snort\.rules/" /etc/snort/pulledpork.conf
+sed -i "89s/.*/local_rules=\/etc\/snort\/rules\/local\.rules/" /etc/snort/pulledpork.conf
+sed -i "92s/.*/sid_msg=\/etc\/snort\/sid-msg\.map/" /etc/snort/pulledpork.conf
+sed -i "119s/.*/config_path=\/etc\/snort\/snort\.conf/" /etc/snort/pulledpork.conf
+sed -i "136s/.*/distro=Centos-7/" /etc/snort/pulledpork.conf
+sed -i "144s/.*/ack_list=\/etc\/snort\/rules\/iplists\/default\.blacklist/" /etc/snort/pulledpork.conf
+sed -i "153s/.*/IPRVersion=\/etc\/snort\/rules\/iplists/" /etc/snort/pulledpork.conf
+sed -i "202s/.*/enablesid=\/etc\/snort\/enablesid\.conf/" /etc/snort/pulledpork.conf
+sed -i "203s/.*/dropsid=\/etc\/snort\/dropsid\.conf/" /etc/snort/pulledpork.conf
+sed -i "204s/.*/disablesid=\/etc\/snort\/disablesid\.conf/" /etc/snort/pulledpork.conf
+sed -i "205s/.*/modifysid=\/etc\/snort\/modifysid\.conf/" /etc/snort/pulledpork.conf
+
+pulledpork.pl -c /etc/snort/pulledpork.conf
+echo "include \$RULE_PATH/snort.rules" >> /etc/snort/snort.conf
+
+echo "Ricorda di modificare il file /etc/snort/pulledpork.conf per includere il set di regole"
+echo "Alla fine potrai lanciare il comando per il test di snort"
