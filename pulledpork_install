@@ -1,5 +1,6 @@
 #/bin/sh 
 
+cd ~/snort_src
 git clone https://github.com/shirkdog/pulledpork.git
 cd pulledpork/ 
 cp pulledpork.pl /usr/local/bin 
