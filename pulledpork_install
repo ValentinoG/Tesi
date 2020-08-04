@@ -21,8 +21,8 @@ sed -i "203s/.*/dropsid=\/etc\/snort\/dropsid\.conf/" /etc/snort/pulledpork.conf
 sed -i "204s/.*/disablesid=\/etc\/snort\/disablesid\.conf/" /etc/snort/pulledpork.conf
 sed -i "205s/.*/modifysid=\/etc\/snort\/modifysid\.conf/" /etc/snort/pulledpork.conf
 
-pulledpork.pl -c /etc/snort/pulledpork.conf
+
 echo "include \$RULE_PATH/snort.rules" >> /etc/snort/snort.conf
 
 echo "Ricorda di modificare il file /etc/snort/pulledpork.conf per includere il set di regole"
-echo "Alla fine potrai lanciare il comando per il test di snort"
+echo "Alla fine potrai lanciare il comando di pulledpork finale e il comando per il test di snort"
