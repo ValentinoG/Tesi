@@ -20,6 +20,7 @@ cd ..
 git clone http://luajit.org/git/luajit-2.0.git
 cd luajit-2.0
 make && make install
+cd ..
 
 wget https://www.snort.org/downloads/snort/snort-2.9.16.tar.gz
 tar -xvzf snort-2.9.16.tar.gz
@@ -28,6 +29,7 @@ cd snort-2.9.16
 ldconfig
 ln -s /usr/local/bin/snort /usr/sbin/snort
 snort -v
+cd ~
 
 groupadd snort
 useradd snort -r -s /sbin/nologin -c SNORT_IDS -g snort
