@@ -1,4 +1,4 @@
 #/bin/sh 
 
 yum update -y
-yum install gcc gcc-c++  flex bison zlib git libnghttp2 wget xz-devel lzma zlib-devel pcre pcre-devel libdnet libdnet-devel tcpdump autoconf automake openssl-devel libtool libnetfilter_queue libnetfilter_queue-devel -y
+yum install gcc gcc-c++  flex bison zlib git libnghttp2 wget xz-devel lzma zlib-devel pcre pcre-devel libdnet libdnet-devel tcpdump autoconf automake openssl-devel libtool perl-core -y
