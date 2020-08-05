@@ -1,68 +1,109 @@
 #/bin/sh 
-mkdir ./snort_src
+
+echo "Desideri creare la cartella snort_src?"
+read opt
+
+if [ $opt == "y" ]   
+then
+  mkdir ./snort_src
+fi
+
 cd snort_src
 
-wget http://www.tcpdump.org/release/libpcap-1.8.1.tar.gz
-tar xzvf libpcap-1.8.1.tar.gz
-cd libpcap-1.8.1
-autoreconf -f -i
-./configure && make && make install
-yum install libpcap-devel -y
-cd ..
 
-wget https://www.snort.org/downloads/snort/daq-2.0.7.tar.gz
-tar xvfz daq-2.0.7.tar.gz
-cd daq-2.0.7
-autoreconf -f -i
-./configure && make && make install
-cd ..
+echo "Desideri scaricare e installare libpcap?"
+read opt
 
-git clone http://luajit.org/git/luajit-2.0.git
-cd luajit-2.0
-make && make install
-cd ..
+if [ $opt == "y" ]   
+then
+  wget http://www.tcpdump.org/release/libpcap-1.8.1.tar.gz
+  tar xzvf libpcap-1.8.1.tar.gz
+  cd libpcap-1.8.1
+  autoreconf -f -i
+  ./configure && make && make install
+  yum install libpcap-devel -y
+  cd ..
+fi
 
-wget https://www.snort.org/downloads/snort/snort-2.9.16.1.tar.gz
-tar -xvzf snort-2.9.16.1.tar.gz
-cd snort-2.9.16.1.tar.gz
-./configure --enable-sourcefire && make && make install
-ldconfig
-ln -s /usr/local/bin/snort /usr/sbin/snort
-snort -v
-cd ..
+echo "Desideri scaricare e installare daq?"
+read opt
 
-groupadd snort
-useradd snort -r -s /sbin/nologin -c SNORT_IDS -g snort
-mkdir /etc/snort
-mkdir /etc/snort/rules
-mkdir /etc/snort/rules/iplists
-mkdir /etc/snort/preproc_rules
-mkdir /usr/local/lib/snort_dynamicrules
-mkdir /etc/snort/so_rules
-touch /etc/snort/rules/iplists/black_list.rules
-touch /etc/snort/rules/iplists/white_list.rules
-touch /etc/snort/rules/local.rules
-touch /etc/snort/sid-msg.map
-mkdir /var/log/snort
-mkdir /var/log/snort/archived_logs
-chmod -R 5775 /etc/snort
-chmod -R 5775 /var/log/snort
-chmod -R 5775 /var/log/snort/archived_logs
-chmod -R 5775 /etc/snort/so_rules
-chmod -R 5775 /usr/local/lib/snort_dynamicrules
-chown -R snort:snort /etc/snort
-chown -R snort:snort /var/log/snort
-chown -R snort:snort /usr/local/lib/snort_dynamicrules
-cd snort-2.9.16.1.tar.gz/etc/
-cp *.conf* /etc/snort
-cp *.map /etc/snort
-cp *.dtd /etc/snort
-cd ~/snort_src/snort-2.9.16.1.tar.gz/src/dynamic-preprocessors/build/usr/local/lib/snort_dynamicpreprocessor/
-cp * /usr/local/lib/snort_dynamicpreprocessor/
+if [ $opt == "y" ]   
+then
+  wget https://www.snort.org/downloads/snort/daq-2.0.7.tar.gz
+  tar xvfz daq-2.0.7.tar.gz
+  cd daq-2.0.7
+  autoreconf -f -i
+  ./configure && make && make install
+  cd ..
+fi
 
-sed -i "/var RULE\_PATH/c\var RULE\_PATH \/etc\/snort\/rules" /etc/snort/snort.conf
-sed -i "/var SO\_RULE\_PATH/c\var SO\_RULE\_PATH \/etc\/snort\/so_rules" /etc/snort/snort.conf
-sed -i "/var PREPROC\_RULE\_PATH/c\var PREPROC\_RULE\_PATH \/etc\/snort\/preproc\_rules" /etc/snort/snort.conf
-sed -i "/var WHITE\_LIST\_PATH/c\var WHITE\_LIST\_PATH \/etc\/snort\/rules\/iplists" /etc/snort/snort.conf
-sed -i "/var BLACK\_LIST\_PATH/c\var BLACK\_LIST\_PATH \/etc\/snort\/rules\/iplists" /etc/snort/snort.conf
-sed -i "s/include \$RULE\_PATH/#include \$RULE\_PATH/" /etc/snort/snort.conf
+
+echo "Desideri scaricare e installare daq?"
+read opt
+
+if [ $opt == "y" ]   
+then
+  git clone http://luajit.org/git/luajit-2.0.git
+  cd luajit-2.0
+  make && make install
+  cd ..
+fi
+
+echo "Desideri scaricare e installare snort?"
+read opt
+
+
+if [ $opt == "y" ]   
+then
+  wget https://www.snort.org/downloads/snort/snort-2.9.16.1.tar.gz
+  tar -xvzf snort-2.9.16.1.tar.gz
+  cd snort-2.9.16.1.tar.gz
+  ./configure --enable-sourcefire && make && make install
+  ldconfig
+  ln -s /usr/local/bin/snort /usr/sbin/snort
+  snort -v
+  cd ..
+fi
+
+echo "Desideri ultimare la configurazione di snort? (devi avere snort scaricato ed essere posizionato nella cartella snort_src)"
+read opt
+
+if [ $opt == "y" ]   
+then
+  groupadd snort
+  useradd snort -r -s /sbin/nologin -c SNORT_IDS -g snort
+  mkdir /etc/snort
+  mkdir /etc/snort/rules
+  mkdir /etc/snort/rules/iplists
+  mkdir /etc/snort/preproc_rules
+  mkdir /usr/local/lib/snort_dynamicrules
+  mkdir /etc/snort/so_rules
+  touch /etc/snort/rules/iplists/black_list.rules
+  touch /etc/snort/rules/iplists/white_list.rules
+  touch /etc/snort/rules/local.rules
+  touch /etc/snort/sid-msg.map
+  mkdir /var/log/snort
+  mkdir /var/log/snort/archived_logs
+  chmod -R 5775 /etc/snort
+  chmod -R 5775 /var/log/snort
+  chmod -R 5775 /var/log/snort/archived_logs
+  chmod -R 5775 /etc/snort/so_rules
+  chmod -R 5775 /usr/local/lib/snort_dynamicrules
+  chown -R snort:snort /etc/snort
+  chown -R snort:snort /var/log/snort
+  chown -R snort:snort /usr/local/lib/snort_dynamicrules
+  cd snort-2.9.16.1.tar.gz/etc/
+  cp *.conf* /etc/snort
+  cp *.map /etc/snort
+  cp *.dtd /etc/snort
+  cd ~/snort_src/snort-2.9.16.1.tar.gz/src/dynamic-preprocessors/build/usr/local/lib/snort_dynamicpreprocessor/
+  cp * /usr/local/lib/snort_dynamicpreprocessor/
+
+  sed -i "/var RULE\_PATH/c\var RULE\_PATH \/etc\/snort\/rules" /etc/snort/snort.conf
+  sed -i "/var SO\_RULE\_PATH/c\var SO\_RULE\_PATH \/etc\/snort\/so_rules" /etc/snort/snort.conf
+  sed -i "/var PREPROC\_RULE\_PATH/c\var PREPROC\_RULE\_PATH \/etc\/snort\/preproc\_rules" /etc/snort/snort.conf
+  sed -i "/var WHITE\_LIST\_PATH/c\var WHITE\_LIST\_PATH \/etc\/snort\/rules\/iplists" /etc/snort/snort.conf
+  sed -i "/var BLACK\_LIST\_PATH/c\var BLACK\_LIST\_PATH \/etc\/snort\/rules\/iplists" /etc/snort/snort.conf
+  sed -i "s/include \$RULE\_PATH/#include \$RULE\_PATH/" /etc/snort/snort.conf
+fi
