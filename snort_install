@@ -58,7 +58,7 @@ if [ $opt == "y" ]
 then
   wget https://www.snort.org/downloads/snort/snort-2.9.16.1.tar.gz
   tar -xvzf snort-2.9.16.1.tar.gz
-  cd snort-2.9.16.1.tar.gz
+  cd snort-2.9.16.1
   ./configure --enable-sourcefire && make && make install
   ldconfig
   ln -s /usr/local/bin/snort /usr/sbin/snort
@@ -93,11 +93,11 @@ then
   chown -R snort:snort /etc/snort
   chown -R snort:snort /var/log/snort
   chown -R snort:snort /usr/local/lib/snort_dynamicrules
-  cd snort-2.9.16.1.tar.gz/etc/
+  cd snort-2.9.16.1/etc/
   cp *.conf* /etc/snort
   cp *.map /etc/snort
   cp *.dtd /etc/snort
-  cd ~/snort_src/snort-2.9.16.1.tar.gz/src/dynamic-preprocessors/build/usr/local/lib/snort_dynamicpreprocessor/
+  cd ~/snort_src/snort-2.9.16.1/src/dynamic-preprocessors/build/usr/local/lib/snort_dynamicpreprocessor/
   cp * /usr/local/lib/snort_dynamicpreprocessor/
 
   sed -i "/var RULE\_PATH/c\var RULE\_PATH \/etc\/snort\/rules" /etc/snort/snort.conf
