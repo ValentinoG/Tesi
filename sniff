@@ -1,0 +1,6 @@
+import time
+import scapy.all as scapy
+
+zzz = scapy.sniff(lfilter=lambda d: d.dst == '70:4d:7b:3b:ca:f2')
+print zzz
+	
