@@ -1,0 +1,4 @@
+sendp(Ether(dst='ff:ff:ff:ff:ff:ff',src='00:01:02:03:04:05')/Dot1
+Q(vlan=1)/Dot1Q(vlan=10)/ARP(op=2,
+psrc="192.168.1.1",
+pdst="192.168.1.104", hwdst="12:34:45:67:89:12"))
