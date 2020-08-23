@@ -3,4 +3,21 @@ import scapy.all as scapy
 
 zzz = scapy.sniff(lfilter=lambda d: d.dst == '70:4d:7b:3b:ca:f2')
 print zzz
+
+-------------------------------------------------------------------------------
+
+from scapy.all import *
+from scapy.layers.inet import IP
+
+
+def change_send(pckt):
+    actual_src = pckt[IP].src
+    pckt[IP].src = "192.168.1.5"
+    pckt[IP].tos = 1
+    sendp(pckt)
+    print("We changed source from " + actual_src + " to " + pckt[IP].src)
+
+
+while 1:
+    sniff(filter="ip src host 192.168.1.2", prn=change_send)
 	
