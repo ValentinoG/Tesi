@@ -6,11 +6,9 @@ from scapy.all import sendpfast, Ether, IP, RandIP, RandMAC, TCP
 
 print("Initializing...")
 
-# We first build all packets...
 pkts = []
 for i in xrange(0, nbpkts):
   macaddr = str(RandMAC())
-  # registered by the switches.
   pkts.append(Ether(src=macaddr, dst="ff:ff:ff:ff:ff:ff")/
               IP(src=str(RandIP()), dst=str(RandIP()))/
               TCP(dport=80, flags="S", options=[('Timestamp', (0, 0))]))
